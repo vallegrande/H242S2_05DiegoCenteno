@@ -13,6 +13,13 @@ public class MaterialEscolarView extends JFrame {
     public JTextField txtDescripcion, txtStockMinimo;
     public JLabel lblEstadoVisual = new JLabel("");
     public JComboBox<String> cbMarca;
+    // Componentes agregados para cumplir con requisitos de examen
+    public JRadioButton rbNacional, rbImportado;
+    public JCheckBox chkIncluyeIGV;
+    public JTextField txtFechaCompra; // Campo para selector de fecha
+    public JMenuBar menuBar;
+    public JMenu menuArchivo;
+    public JMenuItem itemSalir;
 
     public MaterialEscolarView() {
         setTitle("Gestión de Materiales Escolares");
@@ -20,6 +27,14 @@ public class MaterialEscolarView extends JFrame {
         setSize(800, 500);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+
+        // --- MENÚ ---
+        menuBar = new JMenuBar();
+        menuArchivo = new JMenu("Archivo");
+        itemSalir = new JMenuItem("Salir");
+        menuArchivo.add(itemSalir);
+        menuBar.add(menuArchivo);
+        setJMenuBar(menuBar);
 
         // Panel de formulario en dos columnas, fondo blanco, borde moderno
         JPanel panelForm = new JPanel(new GridBagLayout()) {
@@ -51,10 +66,91 @@ public class MaterialEscolarView extends JFrame {
         txtProducto = new JTextField(10);
         txtProducto.setFont(fieldFont);
         txtProducto.setPreferredSize(fieldDim);
-        cbCategoria = new JComboBox<>(new String[]{"Cuaderno", "Lapicero", "Mochila", "Libro", "Otro"});
+        // Actualizar categorías con la lista detallada
+        cbCategoria = new JComboBox<>(new String[]{
+            "Papelería - Cuadernos",
+            "Papelería - Hojas bond / resmas",
+            "Papelería - Agendas",
+            "Papelería - Libretas",
+            "Papelería - Carpetas",
+            "Papelería - Archivadores",
+            "Papelería - Separadores",
+            "Escritura y Corrección - Lápices",
+            "Escritura y Corrección - Lapiceros / bolígrafos",
+            "Escritura y Corrección - Marcadores",
+            "Escritura y Corrección - Plumones",
+            "Escritura y Corrección - Correctores",
+            "Escritura y Corrección - Portaminas y minas",
+            "Escritura y Corrección - Tizas",
+            "Colores y Arte - Colores (lápices)",
+            "Colores y Arte - Plumones",
+            "Colores y Arte - Pinturas (acuarelas, témperas)",
+            "Colores y Arte - Pinceles",
+            "Colores y Arte - Ceras / crayones",
+            "Colores y Arte - Paletas para mezclar",
+            "Corte y Pegado - Tijeras",
+            "Corte y Pegado - Goma en barra",
+            "Corte y Pegado - Goma líquida",
+            "Corte y Pegado - Cinta adhesiva",
+            "Corte y Pegado - Pegamento en silicona fría / caliente",
+            "Corte y Pegado - Cutter",
+            "Medición y Geometría - Reglas",
+            "Medición y Geometría - Escuadras",
+            "Medición y Geometría - Compás",
+            "Medición y Geometría - Transportadores",
+            "Medición y Geometría - Juegos de geometría",
+            "Mochilas y Loncheras - Mochilas escolares",
+            "Mochilas y Loncheras - Loncheras",
+            "Mochilas y Loncheras - Cartucheras",
+            "Mochilas y Loncheras - Maletines",
+            "Tecnología y Electrónica - Calculadoras",
+            "Tecnología y Electrónica - USBs",
+            "Tecnología y Electrónica - Audífonos escolares",
+            "Tecnología y Electrónica - Tablets (uso escolar)",
+            "Tecnología y Electrónica - Lámparas LED",
+            "Mobiliario escolar - Sillas y escritorios infantiles",
+            "Mobiliario escolar - Organizadores de escritorio",
+            "Mobiliario escolar - Atriles para lectura",
+            "Uniformes y Accesorios - Mandiles escolares",
+            "Uniformes y Accesorios - Chalecos",
+            "Uniformes y Accesorios - Gorros",
+            "Uniformes y Accesorios - Ropa deportiva",
+            "Didácticos y Aprendizaje - Abecedarios",
+            "Didácticos y Aprendizaje - Números móviles",
+            "Didácticos y Aprendizaje - Rompecabezas",
+            "Didácticos y Aprendizaje - Juegos didácticos",
+            "Didácticos y Aprendizaje - Pizarras blancas / acrílicas"
+        });
         cbCategoria.setFont(fieldFont);
         cbCategoria.setPreferredSize(fieldDim);
-        cbMarca = new JComboBox<>();
+        // Actualizar marcas con la lista detallada
+        cbMarca = new JComboBox<>(new String[]{
+            "Standford",
+            "Faber-Castell",
+            "Atlas",
+            "Artesco",
+            "Norma",
+            "Stanford",
+            "D'Todo Escolar",
+            "Pelikan",
+            "Crayola",
+            "Carioca",
+            "Justus",
+            "Loro",
+            "Alpha",
+            "Stabilo",
+            "Totto",
+            "Fénix",
+            "Xtrem",
+            "Wilson",
+            "Disney (licencias)",
+            "Casio",
+            "Texas Instruments",
+            "HP",
+            "Kingston (USB)",
+            "Maped",
+            "Staedtler"
+        });
         cbMarca.setFont(fieldFont);
         cbMarca.setPreferredSize(fieldDim);
         txtCantidadUnidad = new JTextField(10);
@@ -107,6 +203,30 @@ public class MaterialEscolarView extends JFrame {
         gbc.gridy = 5; gbc.anchor = GridBagConstraints.WEST; panelForm.add(txtDescripcion, gbc);
         gbc.gridwidth = 1;
 
+        // --- COMPONENTES NUEVOS: RadioButton, CheckBox, Fecha ---
+        rbNacional = new JRadioButton("Nacional");
+        rbImportado = new JRadioButton("Importado");
+        ButtonGroup grupoOrigen = new ButtonGroup();
+        grupoOrigen.add(rbNacional);
+        grupoOrigen.add(rbImportado);
+        chkIncluyeIGV = new JCheckBox("Incluye IGV");
+        txtFechaCompra = new JTextField(10);
+        txtFechaCompra.setFont(fieldFont);
+        txtFechaCompra.setPreferredSize(fieldDim);
+        txtFechaCompra.setToolTipText("Fecha de compra (puedes integrar un selector de fecha aquí)");
+        // Fila 6: Origen (RadioButton), Incluye IGV (CheckBox), Fecha de compra
+        gbc.gridx = 0; gbc.gridy = 6; gbc.anchor = GridBagConstraints.EAST;
+        panelForm.add(new JLabel("Origen:"), gbc);
+        gbc.gridx = 1; gbc.anchor = GridBagConstraints.WEST;
+        JPanel panelRadios = new JPanel();
+        panelRadios.add(rbNacional);
+        panelRadios.add(rbImportado);
+        panelForm.add(panelRadios, gbc);
+        gbc.gridx = 2; gbc.anchor = GridBagConstraints.EAST;
+        panelForm.add(chkIncluyeIGV, gbc);
+        gbc.gridx = 3; gbc.anchor = GridBagConstraints.WEST;
+        panelForm.add(txtFechaCompra, gbc);
+
         // Estado visual debajo del formulario
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 4; gbc.anchor = GridBagConstraints.CENTER;
         panelForm.add(lblEstadoVisual, gbc);
@@ -151,7 +271,7 @@ public class MaterialEscolarView extends JFrame {
         panelGestion.add(btnGestionarProveedores);
 
         // Tabla mejorada
-        String[] columnas = {"ID", "Producto", "Descripción", "Categoría", "Marca", "Unidad", "Docena", "Precio", "Total", "Stock Mínimo", "Estado", "Fecha Registro", "Eliminado"};
+        String[] columnas = {"ID", "Producto", "Descripción", "Categoría", "Marca", "Unidad", "Docena", "Precio", "Total", "Stock Mínimo", "Estado", "Fecha Registro", "Eliminado", "Origen", "Incluye IGV", "Fecha Compra"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {

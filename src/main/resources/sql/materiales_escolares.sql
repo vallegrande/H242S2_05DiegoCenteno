@@ -19,7 +19,10 @@ CREATE TABLE IF NOT EXISTS materiales_escolares (
     stock_minimo INT DEFAULT 1,
     estado VARCHAR(20) DEFAULT 'Activo',
     fecha_registro DATETIME NOT NULL,
-    eliminado_logico BOOLEAN DEFAULT FALSE
+    eliminado_logico BOOLEAN DEFAULT FALSE, -- Indica si el registro fue eliminado lógicamente
+    origen VARCHAR(20), -- Nacional o Importado
+    incluye_igv BOOLEAN DEFAULT FALSE, -- Si el material incluye IGV
+    fecha_compra VARCHAR(20) -- Fecha de compra del material
 );
 
 CREATE TABLE IF NOT EXISTS categoria (

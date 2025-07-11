@@ -15,6 +15,9 @@ public class MaterialEscolar {
     private String descripcion;
     private int stockMinimo;
     private String estado;
+    private String origen; // Nacional o Importado
+    private boolean incluyeIGV;
+    private String fechaCompra; // Puede ser String o LocalDate según implementación
 
     public MaterialEscolar() {}
 
@@ -55,4 +58,10 @@ public class MaterialEscolar {
     public void setStockMinimo(int stockMinimo) { this.stockMinimo = stockMinimo; }
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
+    public String getOrigen() { return origen; }
+    public void setOrigen(String origen) { this.origen = origen; }
+    public boolean isIncluyeIGV() { return incluyeIGV; }
+    public void setIncluyeIGV(boolean incluyeIGV) { this.incluyeIGV = incluyeIGV; }
+    public String getFechaCompra() { return fechaCompra; }
+    public void setFechaCompra(String fechaCompra) { this.fechaCompra = fechaCompra; }
 } 

@@ -21,7 +21,6 @@ public class MaterialEscolarController {
 
     public MaterialEscolarController(MaterialEscolarView view) {
         this.view = view;
-        cargarMarcas();
         this.view.btnAgregar.addActionListener(e -> agregarMaterial());
         this.view.btnModificar.addActionListener(e -> modificarMaterial());
         this.view.btnEliminarLogico.addActionListener(e -> eliminarMaterial(true));
@@ -45,6 +44,8 @@ public class MaterialEscolarController {
             public void removeUpdate(javax.swing.event.DocumentEvent e) { actualizarTotal(); }
             public void changedUpdate(javax.swing.event.DocumentEvent e) { actualizarTotal(); }
         });
+        this.view.menuBar = view.menuBar;
+        this.view.itemSalir.addActionListener(e -> System.exit(0));
         listarMateriales();
     }
 
@@ -68,6 +69,9 @@ public class MaterialEscolarController {
         String precioStr = view.txtPrecio.getText();
         String descripcion = view.txtDescripcion.getText();
         String stockMinimoStr = view.txtStockMinimo.getText();
+        String origen = view.rbNacional.isSelected() ? "Nacional" : (view.rbImportado.isSelected() ? "Importado" : "");
+        boolean incluyeIGV = view.chkIncluyeIGV.isSelected();
+        String fechaCompra = view.txtFechaCompra.getText();
         if (producto.isEmpty() || marca.isEmpty() || cantidadUnidadStr.isEmpty() || cantidadDocenaStr.isEmpty() || precioStr.isEmpty() || descripcion.isEmpty() || stockMinimoStr.isEmpty()) {
             JOptionPane.showMessageDialog(view, "Complete todos los campos.");
             return;
@@ -97,6 +101,9 @@ public class MaterialEscolarController {
             m.setStockMinimo(Integer.parseInt(stockMinimoStr));
             m.setEstado("Activo");
             m.setFechaRegistro(java.time.LocalDateTime.now());
+            m.setOrigen(origen);
+            m.setIncluyeIGV(incluyeIGV);
+            m.setFechaCompra(fechaCompra);
             service.agregar(m);
             JOptionPane.showMessageDialog(view, "Material agregado correctamente.");
             limpiarCampos();
@@ -121,6 +128,9 @@ public class MaterialEscolarController {
         String precioStr = view.txtPrecio.getText();
         String descripcion = view.txtDescripcion.getText();
         String stockMinimoStr = view.txtStockMinimo.getText();
+        String origen = view.rbNacional.isSelected() ? "Nacional" : (view.rbImportado.isSelected() ? "Importado" : "");
+        boolean incluyeIGV = view.chkIncluyeIGV.isSelected();
+        String fechaCompra = view.txtFechaCompra.getText();
         if (producto.isEmpty() || marca.isEmpty() || cantidadUnidadStr.isEmpty() || cantidadDocenaStr.isEmpty() || precioStr.isEmpty() || descripcion.isEmpty() || stockMinimoStr.isEmpty()) {
             JOptionPane.showMessageDialog(view, "Complete todos los campos.");
             return;
@@ -149,6 +159,9 @@ public class MaterialEscolarController {
             m.setCantidadDocena(cantidadDocena);
             m.setPrecio(Double.parseDouble(precioStr));
             m.setStockMinimo(Integer.parseInt(stockMinimoStr));
+            m.setOrigen(origen);
+            m.setIncluyeIGV(incluyeIGV);
+            m.setFechaCompra(fechaCompra);
             service.modificar(m);
             JOptionPane.showMessageDialog(view, "Material modificado correctamente.");
             limpiarCampos();
@@ -188,7 +201,7 @@ public class MaterialEscolarController {
             java.util.List<MaterialEscolar> lista = service.listar();
             java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             for (MaterialEscolar m : lista) {
-                Object[] fila = new Object[13];
+                Object[] fila = new Object[16];
                 fila[0] = m.getId();
                 fila[1] = m.getProducto();
                 fila[2] = m.getDescripcion();
@@ -209,6 +222,9 @@ public class MaterialEscolarController {
                 fila[10] = m.getEstado();
                 fila[11] = m.getFechaRegistro().format(formatter);
                 fila[12] = m.isEliminadoLogico() ? "Sí" : "No";
+                fila[13] = m.getOrigen();
+                fila[14] = m.isIncluyeIGV() ? "Sí" : "No";
+                fila[15] = m.getFechaCompra();
                 modelo.addRow(fila);
             }
         } catch (Exception ex) {
@@ -226,8 +242,7 @@ public class MaterialEscolarController {
             view.txtCantidadUnidad.setText(view.modeloTabla.getValueAt(fila, 5).toString());
             view.txtCantidadDocena.setText(view.modeloTabla.getValueAt(fila, 6).toString());
             view.txtPrecio.setText(view.modeloTabla.getValueAt(fila, 7).toString());
-            view.txtStockMinimo.setText(view.modeloTabla.getValueAt(fila, 8).toString());
-            String estado = view.modeloTabla.getValueAt(fila, 9).toString();
+            String estado = view.modeloTabla.getValueAt(fila, 10).toString();
             if ("Activo".equalsIgnoreCase(estado)) {
                 view.lblEstadoVisual.setText("Estado: Activo");
                 view.lblEstadoVisual.setForeground(new java.awt.Color(27, 94, 32));
@@ -237,6 +252,14 @@ public class MaterialEscolarController {
             } else {
                 view.lblEstadoVisual.setText("");
             }
+            // Cargar nuevos campos
+            String origen = view.modeloTabla.getValueAt(fila, 13) != null ? view.modeloTabla.getValueAt(fila, 13).toString() : "";
+            view.rbNacional.setSelected("Nacional".equalsIgnoreCase(origen));
+            view.rbImportado.setSelected("Importado".equalsIgnoreCase(origen));
+            String igv = view.modeloTabla.getValueAt(fila, 14) != null ? view.modeloTabla.getValueAt(fila, 14).toString() : "No";
+            view.chkIncluyeIGV.setSelected("Sí".equalsIgnoreCase(igv));
+            String fechaCompra = view.modeloTabla.getValueAt(fila, 15) != null ? view.modeloTabla.getValueAt(fila, 15).toString() : "";
+            view.txtFechaCompra.setText(fechaCompra);
         } else {
             view.lblEstadoVisual.setText("");
         }
@@ -254,6 +277,10 @@ public class MaterialEscolarController {
         view.txtTotal.setText("");
         view.tablaMateriales.clearSelection();
         view.lblEstadoVisual.setText("");
+        view.rbNacional.setSelected(false);
+        view.rbImportado.setSelected(false);
+        view.chkIncluyeIGV.setSelected(false);
+        view.txtFechaCompra.setText("");
     }
 
     private void actualizarTotal() {

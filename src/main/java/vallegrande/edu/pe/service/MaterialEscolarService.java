@@ -11,7 +11,7 @@ import java.util.List;
 public class MaterialEscolarService {
     public void agregar(MaterialEscolar material) throws SQLException {
         try (Connection conn = Conexion.getConnection()) {
-            String sql = "INSERT INTO materiales_escolares (producto, descripcion, categoria, marca, cantidad_unidad, cantidad_docena, precio, stock_minimo, estado, fecha_registro, eliminado_logico) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false)";
+            String sql = "INSERT INTO materiales_escolares (producto, descripcion, categoria, marca, cantidad_unidad, cantidad_docena, precio, stock_minimo, estado, fecha_registro, eliminado_logico, origen, incluye_igv, fecha_compra) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, ?, ?, ?)";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, material.getProducto());
             ps.setString(2, material.getDescripcion());
@@ -23,13 +23,16 @@ public class MaterialEscolarService {
             ps.setInt(8, material.getStockMinimo());
             ps.setString(9, material.getEstado());
             ps.setTimestamp(10, Timestamp.valueOf(material.getFechaRegistro()));
+            ps.setString(11, material.getOrigen());
+            ps.setBoolean(12, material.isIncluyeIGV());
+            ps.setString(13, material.getFechaCompra());
             ps.executeUpdate();
         }
     }
 
     public void modificar(MaterialEscolar material) throws SQLException {
         try (Connection conn = Conexion.getConnection()) {
-            String sql = "UPDATE materiales_escolares SET producto=?, descripcion=?, categoria=?, marca=?, cantidad_unidad=?, cantidad_docena=?, precio=?, stock_minimo=?, estado=? WHERE id=?";
+            String sql = "UPDATE materiales_escolares SET producto=?, descripcion=?, categoria=?, marca=?, cantidad_unidad=?, cantidad_docena=?, precio=?, stock_minimo=?, estado=?, origen=?, incluye_igv=?, fecha_compra=? WHERE id=?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, material.getProducto());
             ps.setString(2, material.getDescripcion());
@@ -40,7 +43,10 @@ public class MaterialEscolarService {
             ps.setDouble(7, material.getPrecio());
             ps.setInt(8, material.getStockMinimo());
             ps.setString(9, material.getEstado());
-            ps.setInt(10, material.getId());
+            ps.setString(10, material.getOrigen());
+            ps.setBoolean(11, material.isIncluyeIGV());
+            ps.setString(12, material.getFechaCompra());
+            ps.setInt(13, material.getId());
             ps.executeUpdate();
         }
     }
@@ -93,6 +99,9 @@ public class MaterialEscolarService {
                 m.setDescripcion(rs.getString("descripcion"));
                 m.setStockMinimo(rs.getInt("stock_minimo"));
                 m.setEstado(rs.getString("estado"));
+                m.setOrigen(rs.getString("origen"));
+                m.setIncluyeIGV(rs.getBoolean("incluye_igv"));
+                m.setFechaCompra(rs.getString("fecha_compra"));
                 lista.add(m);
             }
         }
